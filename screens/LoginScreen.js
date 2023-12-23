@@ -15,7 +15,7 @@ const LoginScreen = ({navigation}) => {
   }
 
   useEffect(() => {
-   const unsubscribre=auth.onAuthStateChanged((user) => {
+   const unsubscribe=auth.onAuthStateChanged((user) => {
       if (user) {
         
         var uid = user.uid;
@@ -25,7 +25,7 @@ const LoginScreen = ({navigation}) => {
         navigation.canGoBack()&&navigation.popToTop();
       }
     });
-    return unsubscribre
+    return unsubscribe
   }, []);
 
 

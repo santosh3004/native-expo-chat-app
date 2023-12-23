@@ -1,8 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useLayoutEffect } from 'react'
-import { auth } from '../firebaseCon';
+import React, { useLayoutEffect,useState, useCallback, useEffect } from 'react'
+import { auth, db } from '../firebaseCon';
 import { AntDesign } from '@expo/vector-icons';
 import { Avatar } from '@rneui/base';
+import { GiftedChat } from 'react-native-gifted-chat'
 
 const ChatScreen = ({navigation}) => {
 
@@ -10,7 +11,7 @@ useLayoutEffect(() => {
   navigation.setOptions({
     headerLeft:()=>(
       <View style={{marginLeft:20}}>
-        <Avatar rounded source={{uri:auth?.currentUser?.photoURL}}/>
+        <Avatar rounded source={{uri: auth?.currentUser?.photoURL}}/>
       </View>
     ),
     headerRight:()=>(
@@ -30,10 +31,59 @@ useLayoutEffect(() => {
       // An error happened.
     });
   }
+
+  const [messages, setMessages] = useState([])
+
+  // useEffect(() => {
+  //   setMessages([
+  //     {
+  //       _id: 1,
+  //       text: 'Hello developer',
+  //       createdAt: new Date(),
+  //       user: {
+  //         _id: 2,
+  //         name: 'React Native',
+  //         avatar: auth?.currentUser?.photoURL,
+  //       },
+  //     },
+  //   ])
+  // }, [])
+  useLayoutEffect(() => {
+    const unsubscribe=db.collection('chats').orderBy('createdAt','desc').onSnapshot(snapshot=>setMessages(
+      snapshot.docs.map(
+        doc=>({
+          _id:doc.data()._id,
+          createdAt:doc.data().createdAt.toDate(),
+          text:doc.data().text,
+          user:doc.data().user,
+        })
+      )
+    ))
+  return unsubscribe
+    
+  }, [])
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, messages),
+    )
+    const {
+      _id,createdAt,text,user
+    }=messages[0]
+    db.collection('chats').add({
+      _id,createdAt,text,user
+    })
+  }, [])
   return (
-    <View>
-      <Text>ChatScreen</Text>
-    </View>
+    <GiftedChat
+      messages={messages}
+      showAvatarForEveryMessage={true}
+      onSend={messages => onSend(messages)}
+      user={{
+        _id: auth?.currentUser?.email,
+        name:auth?.currentUser?.displayName,
+        avatar:auth?.currentUser?.photoURL
+      }}
+    />
   )
 }
 

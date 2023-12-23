@@ -18,9 +18,9 @@ const RegisterScreen = ({navigation}) => {
         // Signed up 
         const user = userCredential.user;
 
-        updateProfile(user, {
+        user.updateProfile({
           displayName: name, 
-          photoURL: imageURL?imageURL : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+          photoURL: imageURL? imageURL : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
         }).then(() => {
           // Profile updated!
           // ...
