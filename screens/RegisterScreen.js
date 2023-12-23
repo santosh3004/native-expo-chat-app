@@ -4,7 +4,8 @@ import { Button, Input } from '@rneui/base';
 import { auth } from '../firebaseCon'
 
 
-const RegisterScreen = () => {
+
+const RegisterScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -12,21 +13,22 @@ const RegisterScreen = () => {
 
   const Register = () => {
 
-    createUserWithEmailAndPassword(auth, email, password)
+    auth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed up 
         const user = userCredential.user;
 
         updateProfile(user, {
-          displayName: name, photoURL: imageURL?imageURL:"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+          displayName: name, 
+          photoURL: imageURL?imageURL : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
         }).then(() => {
           // Profile updated!
           // ...
         }).catch((error) => {
-          // An error occurred
-          // ...
+          alert(error.message)
         });
         // ...
+        navigation.popToTop()
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -66,7 +68,7 @@ const RegisterScreen = () => {
         value={imageURL}
         onChangeText={(text) => setImageURL(text)}
       />
-      <Button title='Register' buttonStyle={styles.button} />
+      <Button title='Register' onPress={Register} buttonStyle={styles.button} />
     </View>
   )
 }
