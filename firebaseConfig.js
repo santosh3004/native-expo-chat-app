@@ -3,9 +3,9 @@
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import * as firebase from 'firebase'
-import 'firebase/auth'
-import 'firebase/firestore'
+import firebase from 'firebase/compat';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,7 +19,7 @@ const firebaseConfig = {
 
 let app;
 // Initialize Firebase
-if (firebase.apps.length === 0) {
+if (firebase.apps && firebase.apps.length ===0) {
   app = firebase.initializeApp(firebaseConfig);
 }
 else {
